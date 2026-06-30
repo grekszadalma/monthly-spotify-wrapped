@@ -1,0 +1,13 @@
+.list {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.song {
+  background: rgba(255,255,255,0.05);
+  padding: 6px;
+  border-radius: 10px;
+}
