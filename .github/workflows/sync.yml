@@ -22,6 +22,6 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: python spotify-api/cron.py
