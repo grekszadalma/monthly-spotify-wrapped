@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
 from supabase_client import supabase
 from spotify import get_recently_played
-from tokens import refresh_access_token, get_refresh_token
+from tokens import refresh_access_token, get_refresh_token, exchange_code_for_tokens
+
 
 
 def parse_time(t: str) -> datetime:
@@ -29,6 +30,13 @@ def update_last_sync(user_id, ts):
         "last_synced_at": ts.isoformat()
     }).execute()
 
+def update_refresh_token(code: str):
+    tokens = exchange_code_for_tokens(code)
+
+    supabase.table("users").upsert({
+        "user_id": "testuser",
+        "refresh_token": tokens["refresh_token"]
+    }).execute()
 
 def sync_tracks(user_id):
     refresh_token = get_refresh_token(user_id)
@@ -37,14 +45,14 @@ def sync_tracks(user_id):
     data = get_recently_played(access_token)
 
     last_sync_raw = get_last_sync(user_id)
-    last_sync = parse_time(last_sync_raw) if last_sync_raw else None
+    last_sync = parse_time(last_sync_raw) if last_sync_raw else datetime(1970, 1, 1, tzinfo=timezone.utc)
 
-    max_seen = last_sync or datetime(1970, 1, 1, tzinfo=timezone.utc)
+    max_seen = last_sync
 
     for item in data.get("items", []):
         played_at = parse_time(item["played_at"])
 
-        if last_sync and played_at <= last_sync:
+        if played_at <= last_sync:
             continue
 
         track = item["track"]

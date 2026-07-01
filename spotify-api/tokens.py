@@ -1,5 +1,6 @@
 import requests
 import base64
+from supabase_client import supabase
 
 def get_tokens(code):
     auth = base64.b64encode(

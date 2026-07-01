@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from auth import get_auth_url, get_token
-from sync import sync_tracks
+from sync import sync_tracks, update_refresh_token
 from tokens import exchange_code_for_tokens
 from analytics import (
     get_plays,
@@ -35,13 +35,7 @@ def login():
 # 2. callback
 @app.get("/callback")
 def callback(code: str):
-    tokens = exchange_code_for_tokens(code)
-
-    supabase.table("users").upsert({
-        "user_id": "testuser",
-        "refresh_token": tokens["refresh_token"]
-    }).execute()
-
+    update_refresh_token(code)
     return "OK"
 
 
