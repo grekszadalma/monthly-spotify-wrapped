@@ -33,9 +33,14 @@ def update_last_sync(user_id, ts):
 def update_refresh_token(code: str):
     tokens = exchange_code_for_tokens(code)
 
+    refresh_token = tokens.get("refresh_token")
+
+    if not refresh_token:
+        raise Exception(f"No refresh token returned: {tokens}")
+
     supabase.table("users").upsert({
         "user_id": "testuser",
-        "refresh_token": tokens["refresh_token"]
+        "refresh_token": refresh_token
     }).execute()
 
 def sync_tracks(user_id):

@@ -1,6 +1,14 @@
 import requests
 import base64
 from supabase_client import supabase
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+REDIRECT_URI = os.getenv("REDIRECT_URI")
 
 def get_tokens(code):
     auth = base64.b64encode(
@@ -16,14 +24,13 @@ def get_tokens(code):
         data={
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": "http://localhost:8000/callback",
+            "redirect_uri": REDIRECT_URI,
         },
     )
 
     return response.json()
 
 def exchange_code_for_tokens(code):
-    import requests, base64
 
     auth = base64.b64encode(
         f"{CLIENT_ID}:{CLIENT_SECRET}".encode()
@@ -38,10 +45,12 @@ def exchange_code_for_tokens(code):
         data={
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": "http://localhost:8000/callback",
+            "redirect_uri": REDIRECT_URI,
         },
     )
 
+    tokens = r.json()
+    print(tokens)
     return r.json()
 
 def refresh_access_token(refresh_token):
