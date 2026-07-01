@@ -54,8 +54,7 @@ def exchange_code_for_tokens(code):
     return r.json()
 
 def refresh_access_token(refresh_token):
-    import requests
-
+   
     r = requests.post(
         "https://accounts.spotify.com/api/token",
         data={
@@ -66,7 +65,15 @@ def refresh_access_token(refresh_token):
         },
     )
 
-    return r.json()["access_token"]
+    print("STATUS:", r.status_code)
+    print("RESPONSE:", r.json())
+
+    data = r.json()
+
+    if "access_token" not in data:
+        raise Exception(f"Spotify refresh failed: {data}")
+
+    return data["access_token"]
 
 def get_refresh_token(user_id):
     res = supabase.table("users") \
